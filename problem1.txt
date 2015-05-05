@@ -1,0 +1,204 @@
+/**
+ * Main program to test the Matrix class
+ * @author Dyly
+ */
+public class Problem1CC {
+    public static void main(String[] args) {
+        Matrix m1 = new Matrix();
+        for (int i = 0; i < m1.getxValue(); i++) 
+        {
+            for (int j = 0; j < m1.getyValue(); j++) 
+            {
+                m1.findNumberOfGroupings(i, j);
+            }
+        }
+        System.out.println(m1.getNumberOfGroupings());
+        System.out.println(m1.toString());
+        
+    }
+}
+
+/**
+ * Represents the data structure for a Matrix filled with a random number of 
+ * 1's and 0's
+ * @author dcw13351
+ */
+public class Matrix 
+{
+    private int xValue = 0;
+    private int yValue = 0;
+    private int numberOfGroupings = 0;
+    private boolean isOriginal = true;
+    private MyInteger[][] matrix;
+
+    /**
+     * Constructor that generates a <code>Matrix</code> of random size that 
+     * is larger than 1x1 and fills it with an object of 
+     * <code>MyInteger</code>, which has a value, either 1 or 0, and a 
+     * boolean to check if this object is already in a grouping
+     */
+    public Matrix() 
+    {
+        this.xValue = (int) (Math.random() * 10);
+        this.yValue = (int) (Math.random() * 10);
+        if(this.xValue < 2)
+        {
+            this.xValue = 2;
+        }
+        if(this.yValue < 2)
+        {
+            this.yValue = 2;
+        }
+        this.matrix = new MyInteger[xValue][yValue];
+        fillMatrix();
+    }
+
+    public int getxValue() {
+        return xValue;
+    }
+
+    public int getyValue() {
+        return yValue;
+    }
+
+    public int getNumberOfGroupings() {
+        return numberOfGroupings;
+    }
+    
+    /**
+     * Generates a new <code>MyInteger</code> object and sets it to a 
+     * position in the <code>Matrix</code> object
+     */
+    private void fillMatrix()
+    {
+        for (int i = 0; i < xValue; i++) 
+        {
+            for (int j = 0; j < yValue; j++) 
+            {
+                //coin flip simulator
+                if(((int) (Math.random()*10))%2==1)
+                {
+                    this.matrix[i][j] = new MyInteger(1, false);
+                }else{
+                    this.matrix[i][j] = new MyInteger(0, false);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Recursively checks the positions in the <code>Matrix</code> object
+     * to find the number of groupings within
+     * @param i x position
+     * @param j y position
+     */
+    public void findNumberOfGroupings(int i, int j)
+    {
+        MyInteger mi1;
+        mi1 = this.matrix[i][j];
+        if(mi1.getValue() == 1 && !mi1.getIsInGroup())
+        { 
+            //if it is the original function call its a new grouping
+            if(this.isOriginal)
+            {
+                this.numberOfGroupings++;
+            }
+            mi1.setIsInGroup(true);
+            //check the virtically and horizontally adjacent cells
+            //virtical check
+            if(i < this.xValue-1)
+            {
+                this.isOriginal = false;
+                findNumberOfGroupings(i+1, j);
+            }
+            if(i > 0)
+            {
+                this.isOriginal = false;
+                findNumberOfGroupings(i-1, j);
+            }
+            //horizontal check
+            if(j < this.yValue-1)
+            {
+                this.isOriginal = false;
+                findNumberOfGroupings(i, j+1);
+            }
+            if(j > 0)
+            {
+                this.isOriginal = false;
+                findNumberOfGroupings(i, j-1);
+            }
+        }
+        this.isOriginal =true;
+    }
+    
+    /**
+     * Generates a String representation of a <code>Matrix</code> object
+     * @return String representation of a <code>Matrix</code> object
+     */
+    @Override
+    public String toString()
+    {
+        String matrixString = "";
+        for (int i = 0; i < this.xValue; i++) 
+        {
+            for (int j = 0; j < this.yValue; j++) 
+            {
+                matrixString += this.matrix[i][j].toString()+" ";
+            }
+            matrixString+="\n";
+        }
+        return matrixString;
+    }
+}
+
+/**
+ * Defines the structure of a <code>MyInteger</code> object
+ * @author Dyly
+ */
+public class MyInteger {
+    private int value;
+    private boolean isInGroup;
+    
+    /**
+     * Constructor that generates a <code>MyInteger</code> object and sets 
+     * the value (int) and isInGroup (boolean)
+     * @param value Either a 1 or a 0
+     * @param isInGroup Either true or false
+     */
+    public MyInteger(int value, boolean isInGroup)
+    {
+        this.value = value;
+        this.isInGroup = isInGroup;
+    }
+    
+    /**
+     * Default constructor
+     */
+    public MyInteger(){
+        this.value = -1;
+        this.isInGroup = false;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public boolean getIsInGroup() {
+        return isInGroup;
+    }
+
+    public void setIsInGroup(boolean isInGroup) {
+        this.isInGroup = isInGroup;
+    }
+    
+    /**
+     * Generates a String representation of a <code>MyInteger</code> object
+     * @return String representation of a <code>MyInteger</code> object, 
+     * which is just its value (int)
+     */
+    @Override
+    public String toString()
+    {
+        return ""+this.value;
+    }
+}
